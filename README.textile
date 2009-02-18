@@ -1,0 +1,14 @@
+h1. About
+
+h1. Usage
+
+path = Path.new("public/javascripts/mootools-core.js")
+
+path.relative
+# => "public/javascripts/mootools-core.js"
+
+path.absolute
+# => "/Users/botanicus/projects/webs/myproject/public/javascripts/mootools-core.js"
+
+path.server
+# => "/javascripts/mootools-core.js"
