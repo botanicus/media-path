@@ -1,4 +1,5 @@
-require "path"
+#require "path"
+# TODO:from easyruby, but it's not done yet
 
 class Path
   attr_reader :absolute
