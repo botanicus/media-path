@@ -15,7 +15,7 @@ class Path
     else
       @absolute = File.expand_path(File.join(Merb.root, path))
     end
-    raise unless File.exist?(@absolute)
+    raise "File does not exist: '#{@absolute}'" unless File.exist?(@absolute)
   end
 
   def relative
