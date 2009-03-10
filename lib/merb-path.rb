@@ -21,8 +21,7 @@ class Path
 
   def relative
     path = @absolute.dup
-    path[Merb.root + "/"] = String.new
-    return path
+    path.sub(%r[#{Regexp::quote(Merb.root)}/], "")
   end
 
   def server
@@ -64,7 +63,7 @@ class Path
 
   # TODO: spec it
   def entries
-    Dir["#@relative/*"].map do |path|
+    Dir["#@absolute/*"].map do |path|
       self.class.new(path)
     end
   end
