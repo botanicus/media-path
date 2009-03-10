@@ -71,7 +71,7 @@ class Path
 
   # TODO: spec it
   def inspect
-    %["file://#{relative}"]
+    %["file://#@absolute"]
   end
 
   # TODO: spec it
