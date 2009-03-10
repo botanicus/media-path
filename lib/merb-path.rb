@@ -7,7 +7,8 @@ class Path
   # Path.new("#{Merb.root}/public/uploads")
   def initialize(path)
     path = path.absolute if path.is_a?(Path) # TODO: spec it
-    raise ArgumentError unless path.is_a?(String) # TODO: spec it
+    raise ArgumentError.new("Path must be Path or String") unless path.is_a?(String) # TODO: spec it
+    raise ArgumentError.new("Path can't be empty string") if path.empty? # TODO: spec it
     # no trailing /
     path.sub!(%r{/$}, "")
     if path.match(%r{^/})
@@ -70,7 +71,7 @@ class Path
 
   # TODO: spec it
   def inspect
-    %{"file://#@relative"}
+    %["file://#{relative}"]
   end
 
   # TODO: spec it
