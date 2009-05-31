@@ -1,9 +1,9 @@
 # coding: utf-8
 
+require "extlib"
+
 class Path
-  class << self
-    attr_accessor :root
-  end
+  cattr_accessor :root
   self.root = Dir.pwd
 
   attr_reader :absolute
@@ -14,8 +14,7 @@ class Path
   def initialize(path)
     raise ArgumentError.new("Argument for creating new Path must be string") unless path.is_a?(String)
     raise ArgumentError.new("Path can't be empty string") if path.empty?
-    # no trailing /
-    path.chomp!("/")
+    path.chomp!("/") # no trailing /
     if path.match(%r{^/}) || path.match(%r[^[A-Z]//]) # / or C://
       @absolute = File.expand_path(path)
     else

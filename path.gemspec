@@ -18,6 +18,7 @@ SPECIFICATION = ::Gem::Specification.new do |s|
   s.email = ["knava.bestvinensis", "gmail.com"].join("@")
   s.files = Dir.glob("**/*") - Dir.glob("pkg/*")
   s.require_paths = ["lib"]
+  s.add_dependency "extlib"
   # s.required_ruby_version = ::Gem::Requirement.new(">= 1.9.1")
   # s.rubyforge_project = "path"
 end
