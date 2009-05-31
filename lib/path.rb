@@ -1,3 +1,5 @@
+# coding: utf-8
+
 #require "path"
 # TODO:from easyruby, but it's not done yet
 
