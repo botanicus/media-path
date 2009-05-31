@@ -1,5 +1,18 @@
 h1. About
 
+h1. Setup
+
+<pre>
+Path.media_directory = "public"
+</pre>
+
+h2. Rewriting rules
+
+<pre>
+Path.rewrite { |path| "http://media.domain.org/#{path}" }
+Path.rewrite { |path| path.tr("_", "-") }
+</pre>
+
 h1. Usage
 
 path = Path.new("public/javascripts/mootools-core.js")
