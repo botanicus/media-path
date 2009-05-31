@@ -8,17 +8,16 @@ end
 
 VERSION  = "0.0.1"
 SPECIFICATION = ::Gem::Specification.new do |s|
-  s.name = "merb-path"
+  s.name = "path"
   s.version = VERSION
   s.authors = ["Jakub Šťastný aka Botanicus"]
-  s.homepage = "http://github.com/botanicus/merb-path"
+  s.homepage = "http://github.com/botanicus/path"
   s.summary = "" # TODO
   s.description = "" # TODO: long description
   s.cert_chain = nil
   s.email = ["knava.bestvinensis", "gmail.com"].join("@")
   s.files = Dir.glob("**/*") - Dir.glob("pkg/*")
-  s.add_dependency "merb-core"
   s.require_paths = ["lib"]
   # s.required_ruby_version = ::Gem::Requirement.new(">= 1.9.1")
-  # s.rubyforge_project = "merb-path"
+  # s.rubyforge_project = "path"
 end
