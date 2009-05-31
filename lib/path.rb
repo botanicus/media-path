@@ -3,8 +3,27 @@
 require "extlib"
 
 class Path
-  cattr_accessor :root
-  self.root = Dir.pwd
+  cattr_accessor :media_directory
+  self.media_directory ||= if File.directory?("media") then "media"
+                           elsif File.directory?("public") then "public"
+                           end
+
+  # cattr_reader :root
+  def self.root
+    @root
+  end
+
+  def self.root=(path)
+    raise ArgumentError, "not exist" unless File.directory?(path)
+    @root = File.expand_path(path)
+  end
+  self.root ||= Dir.pwd
+
+  cattr_accessor :rewrite_rules
+  self.rewrite_rules = Array.new
+  def self.rewrite(rule)
+    self.rewrite_rules.push(rule)
+  end
 
   attr_reader :absolute
 
@@ -33,7 +52,7 @@ class Path
   # @since 0.0.1
   def url
     path = @absolute.dup
-    path[Project.root] = String.new
+    path[Path.root] = String.new
     path
   end
 
@@ -93,29 +112,9 @@ class Path
     File.basename(@absolute)
   end
 
-  # # Use instead of File.open("foo", "w")
-  # def self.write(file, &block)
-  #   self.open(file, "w", &block)
-  # end
-  #
-  # # Use instead of File.open("foo", "r")
-  # def self.read(file, &block)
-  #   self.open(file, "r", &block)
-  # end
-  #
-  # # Use instead of File.open("foo", "a")
-  # def self.append(file, &block)
-  #   self.open(file, "a", &block)
-  # end
-  #
-  # # Use instead of File.open("foo", "w+")
-  # def self.rewrite(file, &block)
-  #   self.open(file, "w+", &block)
-  # end
-  #
   # @since 0.0.1
   def write(&block)
-    File.open(file, "w", &block)
+    File.open(@absolute, "w", &block)
   end
 
   # @since 0.0.1
@@ -129,12 +128,12 @@ class Path
 
   # @since 0.0.1
   def append(&block)
-    File.open(file, "a", &block)
+    File.open(@absolute, "a", &block)
   end
 
   # @since 0.0.1
   def rewrite(&block)
-    File.open(file, "w+", &block)
+    File.open(@absolute, "w+", &block)
   end
 
   # Pathname("x.html.erb").extname
@@ -200,12 +199,6 @@ class Path
   # @since 0.0.1
   def hidden?
     self.basename.to_s.match(/^\./).to_bool
-  end
-
-  # dir/foo/../ => dir/
-  # @since 0.0.1
-  def normalize
-    @filename.gsub!(/[^\/]+\/\.{2}/, "")
   end
 
   # @since 0.0.1
