@@ -1,20 +1,23 @@
 # coding: utf-8
 
-require File.join(File.dirname(__FILE__), "spec_helper")
-require "path"
+require "lib/path"
 
 describe Path do
   before do
-    @path = Path.new("public")
+    @root = "spec/stubs/blog"
+    @relative = "public/js/moo.js"
+    @absolute = File.join(@root, @relative)
+    @path = Path.new(@absolute)
+    Path.root = @root
   end
 
   describe "#initialize" do
-    it "should take absolute path or path relative from Merb.root" do
-      @path.should eql(Path.new("#{Merb.root}/public"))
+    it "should take absolute path or path relative from Path.root" do
+      Path.new(@absolute).should eql(Path.new(@relative))
     end
 
     it "should works with both foo and foo/" do
-      @path.should eql(Path.new("public/"))
+      Path.new("#{@absolute}/").path.should_not match(Regexp.new("/$"))
     end
 
     it "should raise exception when the path not exist" do
@@ -33,8 +36,8 @@ describe Path do
   end
 
   describe "#absolute" do
-    it "should returns absolute path" do
-      @path.absolute.should eql("#{Merb.root}/public")
+    it "should be absolute" do
+      @path.absolute.should match(%r[^(/|[A-Z]://)])
     end
 
     it "should returns existing path" do
