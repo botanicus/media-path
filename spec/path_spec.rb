@@ -4,11 +4,12 @@ require "lib/path"
 
 describe Path do
   before do
-    @root = "spec/stubs/blog"
+    @root = File.expand_path("spec/stubs/blog")
     @relative = "public/js/moo.js"
     @absolute = File.join(@root, @relative)
     @path = Path.new(@absolute)
     Path.root = @root
+    Path.media_directory = File.join(@root, "public")
   end
 
   describe "#initialize" do
@@ -27,11 +28,11 @@ describe Path do
 
   describe "#==" do
     it "should be true if both paths has same absolute path" do
-      @path.should eql(Path.new("public"))
+      @path.should eql(Path.new(@relative))
     end
 
     it "should be false if both paths has different absolute path" do
-      @path.should_not eql(Path.new("app"))
+      @path.should_not eql(Path.new(Dir.pwd))
     end
   end
 
@@ -47,22 +48,37 @@ describe Path do
 
   describe "#relative" do
     it "should returns relative path" do
-      @path.relative.should eql("public")
+      @path.relative.should eql(@relative)
     end
 
     it "should returns existing path" do
-      File.exist?(@path.relative).should be_true
+      Dir.chdir(@root) do
+        File.exist?(@path.relative).should be_true
+      end
     end
   end
 
-  describe "#server" do
+  describe "#url" do
     it "should raise exception when it tries to link files out of public directory" do
-      path = Path.new("app")
-      lambda { path.server }.should raise_error
+      path = Path.new(Dir.pwd)
+      lambda { path.url }.should raise_error
     end
 
-    it "should returns relative path" do
-      @path.server.should eql("/")
+    it "should returns absolute URL" do
+      @path.url.should eql("/js/moo.js")
+    end
+  end
+
+  describe ".rewrite" do
+    it "should modified URL" do
+      Path.rewrite { |url| "http://101ideas.cz" + url }
+      @path.url.should eql("http://101ideas.cz/js/moo.js")
+    end
+
+    it "should be FIFO" do
+      Path.rewrite { |url| url.tr("_", "-") }
+      Path.rewrite { |url| "#{url}_test" }
+      @path.url.should match(/_/)
     end
   end
 end

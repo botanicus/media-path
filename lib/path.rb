@@ -3,10 +3,11 @@
 require "extlib"
 
 class Path
-  cattr_accessor :media_directory
-  self.media_directory ||= if File.directory?("media") then "media"
-                           elsif File.directory?("public") then "public"
-                           end
+  cattr_reader :media_directory
+  def self.media_directory=(path)
+    @media_directory = check_path(path)
+  end
+  self.media_directory ||= self.first_directory "media", "public"
 
   # cattr_reader :root
   def self.root
@@ -14,18 +15,33 @@ class Path
   end
 
   def self.root=(path)
-    raise ArgumentError, "not exist" unless File.directory?(path)
-    @root = File.expand_path(path)
+    @root = check_path(path)
   end
   self.root ||= Dir.pwd
 
+  def self.check_path(path)
+    return nil if path.nil? # because of exceptions
+    path = File.expand_path(path)
+    raise ArgumentError, "Path '#{path}' doesn't exist" unless File.directory?(path)
+    return path
+  end
+
+  def self.first_file(*choices)
+    choices.find { |file| File.file?(File.expand_path(file)) }
+  end
+
+  def self.first_directory(*choices)
+    choices.find { |file| File.directory?(File.expand_path(file)) }
+  end
+
   cattr_accessor :rewrite_rules
   self.rewrite_rules = Array.new
-  def self.rewrite(rule)
-    self.rewrite_rules.push(rule)
+  def self.rewrite(&rule)
+    self.rewrite_rules.push(&rule)
   end
 
   attr_reader :absolute
+  alias_method :path, :absolute
 
   # Path.new("public/uploads")
   # Path.new("#{Merb.root}/public/uploads")
@@ -51,9 +67,10 @@ class Path
 
   # @since 0.0.1
   def url
-    path = @absolute.dup
-    path[Path.root] = String.new
-    path
+    url = @absolute.dup
+    url[Path.media_directory] = String.new
+    self.class.rewrite_rules.each { |rule| url = rule.call(url) }
+    return url
   end
 
   # # @since 0.0.1
