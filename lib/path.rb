@@ -47,6 +47,7 @@ class Path
   # Path.new("#{Merb.root}/public/uploads")
   # @since 0.0.1
   def initialize(path)
+    raise if self.class.root.nil?
     raise ArgumentError.new("Argument for creating new Path must be string") unless path.is_a?(String)
     raise ArgumentError.new("Path can't be empty string") if path.empty?
     path.chomp!("/") # no trailing /
@@ -67,6 +68,7 @@ class Path
 
   # @since 0.0.1
   def url
+    raise if self.class.media_directory.nil?
     url = @absolute.dup
     url[Path.media_directory] = String.new
     self.class.rewrite_rules.each { |rule| url = rule.call(url) }

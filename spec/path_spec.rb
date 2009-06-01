@@ -24,6 +24,11 @@ describe Path do
     it "should raise exception when the path not exist" do
       lambda { Path.new("i/do/not/exist/at/all") }.should raise_error
     end
+
+    it "should raise exception if Path.root isn't defined" do
+      Path.root = nil
+      lambda { Path.new(@absolute) }.should raise_error
+    end
   end
 
   describe "#==" do
@@ -66,6 +71,11 @@ describe Path do
 
     it "should returns absolute URL" do
       @path.url.should eql("/js/moo.js")
+    end
+
+    it "should raise exception if Path.media_directory isn't defined" do
+      Path.media_directory = nil
+      lambda { @path.url }.should raise_error
     end
   end
 
