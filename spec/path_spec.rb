@@ -7,9 +7,9 @@ describe Path do
     @root = File.expand_path("spec/stubs/blog")
     @relative = "public/js/moo.js"
     @absolute = File.join(@root, @relative)
-    @path = Path.new(@absolute)
     Path.root = @root
     Path.media_directory = File.join(@root, "public")
+    @path = Path.new(@absolute)
   end
 
   describe "#initialize" do

@@ -20,32 +20,36 @@ class Path
 
   cattr_reader :media_directory
   def self.media_directory=(path)
-    @media_directory = check_path(path)
+    @@media_directory = check_path(path)
   end
-
-  # cattr_reader :root
-  def self.root
-    @root
-  end
-
+  
+  cattr_reader :root
   def self.root=(path)
-    @root = check_path(path)
+    @@root = check_path(path)
   end
 
-  cattr_accessor :rewrite_rules
-  self.rewrite_rules = Array.new
+  cattr_reader :rewrite_rules
+  def self.rewrite_rules=(rules)
+    @@rewrite_rules = rules
+  end
+
+  self.rewrite_rules ||= Array.new
   def self.rewrite(&rule)
-    self.rewrite_rules.push(&rule)
+    # @@rewrite_rules.push(&rule) # WTF?
+    @@rewrite_rules += [rule]
   end
 
   attr_reader :absolute
   alias_method :path, :absolute
 
+  attr_accessor :root, :media_directory
+
   # Path.new("public/uploads")
   # Path.new("#{Merb.root}/public/uploads")
   # @since 0.0.1
   def initialize(path)
-    raise "#{self.class}.root can't be nil!" if self.class.root.nil?
+    self.root = self.class.root
+    raise "#{self.class}#root can't be nil!" if self.root.nil?
     raise ArgumentError.new("Argument for creating new Path must be string") unless path.is_a?(String)
     raise ArgumentError.new("Path can't be empty string") if path.empty?
     path.chomp!("/") # no trailing /
@@ -66,26 +70,13 @@ class Path
 
   # @since 0.0.1
   def url
-    raise "#{self.class}.media_directory can't be nil!" if self.class.media_directory.nil?
+    self.media_directory ||= self.class.media_directory
+    raise "#{self.class}#media_directory can't be nil! If you like setup media_directory for all instances, use #{self.class}.media_directory" if self.media_directory.nil?
     url = @absolute.dup
     url[Path.media_directory] = String.new
-    self.class.rewrite_rules.each { |rule| url = rule.call(url) }
-    return url
+    rules = self.class.rewrite_rules
+    rules.empty? ? url : rules.map { |rule| url = rule.call(url) }.last
   end
-
-  # # @since 0.0.1
-  # def server
-  #   # match public/, but replace just public
-  #   # we need to match directory public, but server path must starts with /
-  #   # change: we can get just public which 1) do not work with our regexp 2) have no slash, so it will returns just "", so we add trailing slash to end:
-  #   if relative.match(%r{^public$})
-  #     return "/"
-  #   elsif relative.match(%r{^public/})
-  #     return relative.sub(%r{^public}, '')
-  #   else
-  #     raise "Ty ty ty!, fuj to je!"
-  #   end
-  # end
 
   # @since 0.0.1
   def ==(another)
@@ -162,15 +153,6 @@ class Path
   end
 
   # @since 0.0.1
-  def extension=(extension)
-    if @path.last.match(/\./)
-      return Path[self[0..-1] + @path.last.sub(/\.\w+$/, ".#{extension}")]
-    else
-      return @path[-1] = "#{@path.last}.#{extension}"
-    end
-  end
-
-  # @since 0.0.1
   def to_a
     return self.to_s.split("/")
   end
@@ -178,11 +160,6 @@ class Path
   # @since 0.0.1
   def without_extension
     return self.to_s.sub(/#{extension}$/, '')
-  end
-
-  # @since 0.0.1
-  def without_extension!
-    return self.to_s.sub!(/#{extension}$/, '')
   end
 
   # alias_method :childrens, :children
