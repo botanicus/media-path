@@ -61,6 +61,11 @@ describe Path do
         File.exist?(@path.relative).should be_true
       end
     end
+
+    it "should returns empty string if Path.root and path to file is the same" do
+      @path.root = @path.absolute
+      @path.relative.should eql("")
+    end
   end
 
   describe "#url" do

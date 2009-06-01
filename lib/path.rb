@@ -3,45 +3,62 @@
 require "extlib"
 
 class Path
+  # @since 0.0.1
   def self.first_file(*choices)
     choices.find { |file| File.file?(File.expand_path(file)) }
   end
 
+  # @since 0.0.1
   def self.first_directory(*choices)
     choices.find { |file| File.directory?(File.expand_path(file)) }
   end
 
-  def self.check_path(path)
+  # @since 0.0.1
+  def self.check_directory_path(path)
     return nil if path.nil? # because of exceptions
+    raise ArgumentError.new("Path can't be created from empty string") if path.empty?
     path = File.expand_path(path)
     raise ArgumentError, "Path '#{path}' doesn't exist" unless File.directory?(path)
     return path
   end
 
+  # @since 0.0.1
   cattr_reader :media_directory
   def self.media_directory=(path)
-    @@media_directory = check_path(path)
-  end
-  
-  cattr_reader :root
-  def self.root=(path)
-    @@root = check_path(path)
+    @@media_directory = self.check_directory_path(path)
   end
 
+  # @since 0.0.1
+  def self.root
+    @@root rescue Dir.pwd
+  end
+
+  # @since 0.0.1
+  def self.root=(path)
+    @@root = self.check_directory_path(path)
+  end
+
+  # @since 0.0.1
   cattr_reader :rewrite_rules
   def self.rewrite_rules=(rules)
     @@rewrite_rules = rules
   end
 
   self.rewrite_rules ||= Array.new
+
+  # @since 0.0.1
   def self.rewrite(&rule)
     # @@rewrite_rules.push(&rule) # WTF?
     @@rewrite_rules += [rule]
   end
 
+  # @since 0.0.1
   attr_reader :absolute
+
+  # @since 0.0.1
   alias_method :path, :absolute
 
+  # @since 0.0.1
   attr_accessor :root, :media_directory
 
   # Path.new("public/uploads")
@@ -49,31 +66,51 @@ class Path
   # @since 0.0.1
   def initialize(path)
     self.root = self.class.root
-    raise "#{self.class}#root can't be nil!" if self.root.nil?
     raise ArgumentError.new("Argument for creating new Path must be string") unless path.is_a?(String)
-    raise ArgumentError.new("Path can't be empty string") if path.empty?
-    path.chomp!("/") # no trailing /
+    raise ArgumentError.new("Path can't be created from empty string") if path.empty?
+    path.chomp!("/") unless path == "/" # no trailing /
     if path.match(%r{^/}) || path.match(%r[^[A-Z]//]) # / or C://
       @absolute = File.expand_path(path)
     else
-      @absolute = File.expand_path(File.join(Path.root, path))
+      @absolute = File.expand_path(File.join(self.class.root, path))
     end
     raise "File does not exist: '#{@absolute}'" unless File.exist?(@absolute)
   end
 
   # @since 0.0.1
+  def root
+    @root || Dir.pwd
+  end
+
+  # @since 0.0.1
+  def media_directory
+    @media_directory ||= self.class.media_directory
+    return @media_directory unless @media_directory.nil?
+    raise "#{self.class}#media_directory can't be nil! If you like setup media_directory for all instances, use #{self.class}.media_directory" if @media_directory.nil?
+  end
+
+  # @since 0.0.1
+  def media_directory=(path)
+    @media_directory = self.class.check_directory_path(path)
+  end
+
+  # @since 0.0.1
+  def root=(path)
+    @root = self.class.check_directory_path(path)
+  end
+
+  # @since 0.0.1
   def relative
     path = @absolute.dup
-    path[Path.root + "/"] = String.new
+    path[self.root] = String.new
+    path.sub!(%r[^/], "")
     return path
   end
 
   # @since 0.0.1
   def url
-    self.media_directory ||= self.class.media_directory
-    raise "#{self.class}#media_directory can't be nil! If you like setup media_directory for all instances, use #{self.class}.media_directory" if self.media_directory.nil?
     url = @absolute.dup
-    url[Path.media_directory] = String.new
+    url[self.media_directory] = String.new
     rules = self.class.rewrite_rules
     rules.empty? ? url : rules.map { |rule| url = rule.call(url) }.last
   end
@@ -89,14 +126,14 @@ class Path
   def join(*segments)
     raise ArgumentError if segments.any? { |segment| not segment.is_a?(String) }
     raise ArgumentError if segments.any? { |segment| segment.match(%r{^/}) }
-    Path.new(File.join(@absolute, *segments))
+    self.class.new(File.join(@absolute, *segments))
   end
 
   # @since 0.0.1
   def +(segment)
     raise ArgumentError unless segment.is_a?(String)
     raise ArgumentError if segment.match(%r{^/})
-    Path.new("#@absolute/#{segment}")
+    self.class.new("#@absolute/#{segment}")
   end
 
   # Dir["#{path}/*"]
