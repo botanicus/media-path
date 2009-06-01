@@ -3,6 +3,21 @@
 require "extlib"
 
 class Path
+  def self.first_file(*choices)
+    choices.find { |file| File.file?(File.expand_path(file)) }
+  end
+
+  def self.first_directory(*choices)
+    choices.find { |file| File.directory?(File.expand_path(file)) }
+  end
+
+  def self.check_path(path)
+    return nil if path.nil? # because of exceptions
+    path = File.expand_path(path)
+    raise ArgumentError, "Path '#{path}' doesn't exist" unless File.directory?(path)
+    return path
+  end
+
   cattr_reader :media_directory
   def self.media_directory=(path)
     @media_directory = check_path(path)
@@ -18,21 +33,6 @@ class Path
     @root = check_path(path)
   end
   self.root ||= Dir.pwd
-
-  def self.check_path(path)
-    return nil if path.nil? # because of exceptions
-    path = File.expand_path(path)
-    raise ArgumentError, "Path '#{path}' doesn't exist" unless File.directory?(path)
-    return path
-  end
-
-  def self.first_file(*choices)
-    choices.find { |file| File.file?(File.expand_path(file)) }
-  end
-
-  def self.first_directory(*choices)
-    choices.find { |file| File.directory?(File.expand_path(file)) }
-  end
 
   cattr_accessor :rewrite_rules
   self.rewrite_rules = Array.new
