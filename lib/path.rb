@@ -22,7 +22,6 @@ class Path
   def self.media_directory=(path)
     @media_directory = check_path(path)
   end
-  self.media_directory ||= self.first_directory "media", "public"
 
   # cattr_reader :root
   def self.root
@@ -32,7 +31,6 @@ class Path
   def self.root=(path)
     @root = check_path(path)
   end
-  self.root ||= Dir.pwd
 
   cattr_accessor :rewrite_rules
   self.rewrite_rules = Array.new
