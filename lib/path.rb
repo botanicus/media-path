@@ -108,6 +108,12 @@ class Path
   end
 
   # @since 0.0.1
+  def parent
+    parent = File.expand_path(File.join(@absolute, ".."))
+    Path.new(parent)
+  end
+
+  # @since 0.0.1
   def url
     url = @absolute.dup
     url[self.media_directory] = String.new
