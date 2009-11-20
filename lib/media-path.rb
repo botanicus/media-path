@@ -3,6 +3,8 @@
 require "rubyexts/class"
 
 class MediaPath
+  VERSION ||= "0.1"
+
   # @since 0.0.1
   def self.first_file(*choices)
     choices.find { |file| File.file?(File.expand_path(file)) }
