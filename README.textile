@@ -8,7 +8,7 @@ h1. Installation
 h1. Setup
 
 <pre>
-MediaMediaPath.media_directory = "public"
+MediaMediaPath.media_root = "public"
 </pre>
 
 h2. Rewriting rules

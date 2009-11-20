@@ -25,9 +25,9 @@ class MediaPath
   end
 
   # @since 0.0.1
-  cattr_reader :media_directory
-  def self.media_directory=(path)
-    @@media_directory = self.check_directory_path(path)
+  cattr_reader :media_root
+  def self.media_root=(path)
+    @@media_root = self.check_directory_path(path)
   end
 
   # @since 0.0.1
@@ -62,7 +62,7 @@ class MediaPath
   alias_method :path, :absolute
 
   # @since 0.0.1
-  attr_accessor :root, :media_directory
+  attr_accessor :root, :media_root
 
   # MediaPath.new("public/uploads")
   # MediaPath.new("#{Merb.root}/public/uploads")
@@ -86,15 +86,15 @@ class MediaPath
   end
 
   # @since 0.0.1
-  def media_directory
-    @media_directory ||= self.class.media_directory
-    return @media_directory unless @media_directory.nil?
-    raise "#{self.class}#media_directory can't be nil! If you like setup media_directory for all instances, use #{self.class}.media_directory" if @media_directory.nil?
+  def media_root
+    @media_root ||= self.class.media_root
+    return @media_root unless @media_root.nil?
+    raise "#{self.class}#media_root can't be nil! If you like setup media_root for all instances, use #{self.class}.media_root" if @media_root.nil?
   end
 
   # @since 0.0.1
-  def media_directory=(path)
-    @media_directory = self.class.check_directory_path(path)
+  def media_root=(path)
+    @media_root = self.class.check_directory_path(path)
   end
 
   # @since 0.0.1
@@ -119,7 +119,7 @@ class MediaPath
   # @since 0.0.1
   def url
     url = @absolute.dup
-    url[self.media_directory] = String.new
+    url[self.media_root] = String.new
     rules = self.class.rewrite_rules
     rules.empty? ? url : rules.map { |rule| url = rule.call(url) }.last
   end

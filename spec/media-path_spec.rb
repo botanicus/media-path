@@ -8,7 +8,7 @@ describe MediaPath do
     @relative = "public/js/moo.js"
     @absolute = File.join(@root, @relative)
     MediaPath.root = @root
-    MediaPath.media_directory = File.join(@root, "public")
+    MediaPath.media_root = File.join(@root, "public")
     @path = MediaPath.new(@absolute)
   end
 
@@ -25,8 +25,8 @@ describe MediaPath do
     # root, root=
   end
 
-  describe ".media_directory attribute" do
-    # media_directory, media_directory=
+  describe ".media_root attribute" do
+    # media_root, media_root=
   end
 
   describe ".rewrite_rules attribute" do
@@ -110,8 +110,8 @@ describe MediaPath do
     # root, root=
   end
 
-  describe "#media_directory attribute" do
-    # media_directory, media_directory=
+  describe "#media_root attribute" do
+    # media_root, media_root=
   end
 
   describe "#url" do
@@ -124,8 +124,8 @@ describe MediaPath do
       @path.url.should eql("/js/moo.js")
     end
 
-    it "should raise exception if MediaPath.media_directory isn't defined" do
-      MediaPath.media_directory = nil
+    it "should raise exception if MediaPath.media_root isn't defined" do
+      MediaPath.media_root = nil
       lambda { @path.url }.should raise_error
     end
   end
