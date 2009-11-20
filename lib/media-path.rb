@@ -77,7 +77,7 @@ class MediaPath
     else
       @absolute = File.expand_path(File.join(self.class.root, path))
     end
-    raise "File does not exist: '#{@absolute}'" unless File.exist?(@absolute)
+    raise Errno::ENOENT, "File does not exist: '#{@absolute}'" unless File.exist?(@absolute)
   end
 
   # @since 0.0.1
