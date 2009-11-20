@@ -1,5 +1,10 @@
 h1. About
 
+h1. Installation
+
+* Prerelease: @gem install media-path --prerelease@
+* Stable Version: @gem install media-path@
+
 h1. Setup
 
 <pre>
@@ -27,3 +32,9 @@ path.absolute
 path.server
 # => "/javascripts/mootools-core.js"
 </pre>
+
+h1. Links
+
+- "Source Code":http://github.com/botanicus/media-path
+- "RunCodeRun":http://runcoderun.com/botanicus/media-path
+- "API Documentation":http://rdoc.info/projects/botanicus/media-path

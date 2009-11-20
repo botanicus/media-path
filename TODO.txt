@@ -1,2 +1,6 @@
 === Version 0.2 ===
+- 100% specs passing
+- YARD API documentation
+
+=== Version 0.3 ===
 - MediaPath::Soft for files that maybe don't exist

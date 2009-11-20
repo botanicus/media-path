@@ -1,0 +1,3 @@
+= Version 0.1
+  * Renamed from path to media-path
+  * Basic functionality for generating URLs, rewrites etc
