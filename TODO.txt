@@ -1,0 +1,2 @@
+=== Version 0.2 ===
+- MediaPath::Soft for files that maybe don't exist

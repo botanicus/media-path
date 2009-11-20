@@ -3,20 +3,20 @@ h1. About
 h1. Setup
 
 <pre>
-Path.media_directory = "public"
+MediaMediaPath.media_directory = "public"
 </pre>
 
 h2. Rewriting rules
 
 <pre>
-Path.rewrite { |path| "http://media.domain.org/#{path}" }
-Path.rewrite { |path| path.tr("_", "-") }
+MediaMediaPath.rewrite { |path| "http://media.domain.org/#{path}" }
+MediaMediaPath.rewrite { |path| path.tr("_", "-") }
 </pre>
 
 h1. Usage
 
 <pre>
-path = Path.new("public/javascripts/mootools-core.js")
+path = MediaMediaPath.new("public/javascripts/mootools-core.js")
 
 path.relative
 # => "public/javascripts/mootools-core.js"

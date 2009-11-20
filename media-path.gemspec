@@ -12,13 +12,13 @@ SPECIFICATION = ::Gem::Specification.new do |s|
   s.version = VERSION
   s.authors = ["Jakub Šťastný aka Botanicus"]
   s.homepage = "http://github.com/botanicus/path"
-  s.summary = "Path abstraction that provides easier interaction with paths and corresponding URLs." # TODO
+  s.summary = "MediaPath abstraction that provides easier interaction with paths and corresponding URLs." # TODO
   s.description = "" # TODO: long description
   s.cert_chain = nil
   s.email = ["knava.bestvinensis", "gmail.com"].join("@")
   s.files = Dir.glob("**/*") - Dir.glob("pkg/*")
   s.require_paths = ["lib"]
-  s.add_dependency "extlib"
+  s.add_dependency "rubyexts"
   # s.required_ruby_version = ::Gem::Requirement.new(">= 1.9.1")
   # s.rubyforge_project = "path"
 end

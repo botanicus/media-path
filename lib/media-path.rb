@@ -1,8 +1,8 @@
 # coding: utf-8
 
-require "extlib"
+require "rubyexts/class"
 
-class Path
+class MediaPath
   # @since 0.0.1
   def self.first_file(*choices)
     choices.find { |file| File.file?(File.expand_path(file)) }
@@ -15,10 +15,10 @@ class Path
 
   # @since 0.0.1
   def self.check_directory_path(path)
-    return nil if path.nil? # because of exceptions
-    raise ArgumentError.new("Path can't be created from empty string") if path.empty?
+    return if path.nil? # because of exceptions
+    raise ArgumentError.new("MediaPath can't be created from empty string") if path.empty?
     path = File.expand_path(path)
-    raise ArgumentError, "Path '#{path}' doesn't exist" unless File.directory?(path)
+    raise ArgumentError, "MediaPath '#{path}' doesn't exist" unless File.directory?(path)
     return path
   end
 
@@ -47,6 +47,7 @@ class Path
   self.rewrite_rules ||= Array.new
 
   # @since 0.0.1
+  # @note It make problems in case of reloading
   def self.rewrite(&rule)
     # @@rewrite_rules.push(&rule) # WTF?
     @@rewrite_rules += [rule]
@@ -61,13 +62,13 @@ class Path
   # @since 0.0.1
   attr_accessor :root, :media_directory
 
-  # Path.new("public/uploads")
-  # Path.new("#{Merb.root}/public/uploads")
+  # MediaPath.new("public/uploads")
+  # MediaPath.new("#{Merb.root}/public/uploads")
   # @since 0.0.1
   def initialize(path)
     self.root = self.class.root
-    raise ArgumentError.new("Argument for creating new Path must be string") unless path.is_a?(String)
-    raise ArgumentError.new("Path can't be created from empty string") if path.empty?
+    raise ArgumentError.new("Argument for creating new MediaPath must be string") unless path.is_a?(String)
+    raise ArgumentError.new("MediaPath can't be created from empty string") if path.empty?
     path.chomp!("/") unless path == "/" # no trailing /
     if path.match(%r{^/}) || path.match(%r[^[A-Z]//]) # / or C://
       @absolute = File.expand_path(path)
@@ -110,7 +111,7 @@ class Path
   # @since 0.0.1
   def parent
     parent = File.expand_path(File.join(@absolute, ".."))
-    Path.new(parent)
+    MediaPath.new(parent)
   end
 
   # @since 0.0.1
@@ -187,7 +188,7 @@ class Path
     File.open(@absolute, "w+", &block)
   end
 
-  # Pathname("x.html.erb").extname
+  # MediaPathname("x.html.erb").extname
   # => ".erb"
   # @since 0.0.1
   def extension(file)
