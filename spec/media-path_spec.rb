@@ -35,13 +35,13 @@ describe MediaPath do
 
   describe ".rewrite" do
     it "should modified URL" do
-      Path.rewrite { |url| "http://101ideas.cz" + url }
+      MediaPath.rewrite { |url| "http://101ideas.cz" + url }
       @path.url.should eql("http://101ideas.cz/js/moo.js")
     end
 
     it "should be FIFO" do
-      Path.rewrite { |url| url.tr("_", "-") }
-      Path.rewrite { |url| "#{url}_test" }
+      MediaPath.rewrite { |url| url.tr("_", "-") }
+      MediaPath.rewrite { |url| "#{url}_test" }
       @path.url.should match(/_/)
     end
   end
@@ -85,7 +85,7 @@ describe MediaPath do
     end
 
     it "should be aliased to #path" do
-      Path.instance_method(:path).should eql(Path.instance_method(:absolute))
+      MediaPath.instance_method(:path).should eql(MediaPath.instance_method(:absolute))
     end
   end
 
@@ -131,6 +131,10 @@ describe MediaPath do
   end
 
   describe ".rewrite" do
+    after(:each) do
+      MediaPath.rewrite_rules.clear
+    end
+
     it "should modified URL" do
       MediaPath.rewrite { |url| "http://101ideas.cz" + url }
       @path.url.should eql("http://101ideas.cz/js/moo.js")
