@@ -1,6 +1,6 @@
 # coding: utf-8
 
-require_relative "../lib/path"
+require_relative "../lib/media-path"
 
 describe MediaPath do
   before do
@@ -10,6 +10,40 @@ describe MediaPath do
     MediaPath.root = @root
     MediaPath.media_directory = File.join(@root, "public")
     @path = MediaPath.new(@absolute)
+  end
+
+  describe ".first_file" do
+  end
+
+  describe ".first_directory" do
+  end
+
+  describe ".check_directory_path" do
+  end
+
+  describe ".root attribute" do
+    # root, root=
+  end
+
+  describe ".media_directory attribute" do
+    # media_directory, media_directory=
+  end
+
+  describe ".rewrite_rules attribute" do
+    # root, root=
+  end
+
+  describe ".rewrite" do
+    it "should modified URL" do
+      Path.rewrite { |url| "http://101ideas.cz" + url }
+      @path.url.should eql("http://101ideas.cz/js/moo.js")
+    end
+
+    it "should be FIFO" do
+      Path.rewrite { |url| url.tr("_", "-") }
+      Path.rewrite { |url| "#{url}_test" }
+      @path.url.should match(/_/)
+    end
   end
 
   describe "#initialize" do
@@ -49,6 +83,10 @@ describe MediaPath do
     it "should returns existing path" do
       File.exist?(@path.absolute).should be_true
     end
+
+    it "should be aliased to #path" do
+      Path.instance_method(:path).should eql(Path.instance_method(:absolute))
+    end
   end
 
   describe "#relative" do
@@ -66,6 +104,14 @@ describe MediaPath do
       @path.root = @path.absolute
       @path.relative.should eql("")
     end
+  end
+
+  describe "#root attribute" do
+    # root, root=
+  end
+
+  describe "#media_directory attribute" do
+    # media_directory, media_directory=
   end
 
   describe "#url" do
@@ -95,5 +141,14 @@ describe MediaPath do
       MediaPath.rewrite { |url| "#{url}_test" }
       @path.url.should match(/_/)
     end
+  end
+
+  describe "#parent" do
+  end
+
+  describe "#join" do
+  end
+
+  describe "#+" do
   end
 end
