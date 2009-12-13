@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require_relative "lib/media-path"
+require_relative "lib/media-path/version"
 
 # ENV setup for external commands
 ENV["RUBYLIB"] = Dir["vendor/*/lib"].join(":")
