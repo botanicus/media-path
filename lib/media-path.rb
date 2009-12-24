@@ -1,7 +1,5 @@
 # coding: utf-8
 
-require "rubyexts/class"
-
 class MediaPath
   # @since 0.0.1
   def self.first_file(*choices)
@@ -23,7 +21,10 @@ class MediaPath
   end
 
   # @since 0.0.1
-  cattr_reader :media_root
+  def self.media_root
+    @@media_root rescue nil
+  end
+
   def self.media_root=(path)
     @@media_root = self.check_directory_path(path)
   end
@@ -39,7 +40,10 @@ class MediaPath
   end
 
   # @since 0.0.1
-  cattr_reader :rewrite_rules
+  def self.rewrite_rules
+    @@rewrite_rules rescue Array.new
+  end
+
   def self.rewrite_rules=(rules)
     @@rewrite_rules = rules
   end
