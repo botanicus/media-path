@@ -13,10 +13,15 @@ require "nake/tasks/gem"
 require "nake/tasks/spec"
 require "nake/tasks/release"
 
-load "code-cleaner.nake"
-
-unless File.exist?(".git/hooks/pre-commit")
-  warn "If you want to contribute to MediaPath, please run ./tasks.rb hooks:whitespace:install to get Git pre-commit hook for removing trailing whitespace"
+begin
+  load "code-cleaner.nake"
+  Nake::Task["hooks:whitespace:install"].tap do |task|
+    task.config[:path] = "script"
+    task.config[:encoding] = "utf-8"
+    task.config[:whitelist] = '(bin/[^/]+|.+\.(rb|rake|nake|thor|task))$'
+  end
+rescue LoadError
+  warn "If you want to contribute to MediaPath, please install code-cleaner and then run ./tasks.rb hooks:whitespace:install to get Git pre-commit hook for removing trailing whitespace."
 end
 
 require_relative "lib/media-path"
@@ -30,9 +35,3 @@ Task[:build].config[:gemspec] = "media-path.gemspec"
 Task[:prerelease].config[:gemspec] = "media-path.pre.gemspec"
 Task[:release].config[:name] = "media-path"
 Task[:release].config[:version] = MediaPath::VERSION
-
-Nake::Task["hooks:whitespace:install"].tap do |task|
-  task.config[:path] = "script"
-  task.config[:encoding] = "utf-8"
-  task.config[:whitelist] = '(bin/[^/]+|.+\.(rb|rake|nake|thor|task))$'
-end
