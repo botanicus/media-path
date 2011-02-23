@@ -1,5 +1,5 @@
-# we can't use just *.gem because
 /*.gem
+.rvmrc
 
 .DS_Store
 .cache
