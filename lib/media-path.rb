@@ -23,30 +23,30 @@ class MediaPath
 
   # @since 0.0.1
   def self.media_root
-    @@media_root rescue nil
+    @media_root
   end
 
   def self.media_root=(path)
-    @@media_root = self.check_directory_path(path)
+    @media_root = self.check_directory_path(path)
   end
 
   # @since 0.0.1
   def self.root
-    @@root rescue Dir.pwd
+    @root ||= Dir.pwd
   end
 
   # @since 0.0.1
   def self.root=(path)
-    @@root = self.check_directory_path(path)
+    @root = self.check_directory_path(path)
   end
 
   # @since 0.0.1
   def self.rewrite_rules
-    @@rewrite_rules rescue Array.new
+    @rewrite_rules ||= Array.new
   end
 
   def self.rewrite_rules=(rules)
-    @@rewrite_rules = rules
+    @rewrite_rules = rules
   end
 
   self.rewrite_rules ||= Array.new
@@ -55,7 +55,7 @@ class MediaPath
   # @note It make problems in case of reloading
   def self.rewrite(&rule)
     # @@rewrite_rules.push(&rule) # WTF?
-    @@rewrite_rules += [rule]
+    @rewrite_rules += [rule]
   end
 
   # @since 0.0.1
