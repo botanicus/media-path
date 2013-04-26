@@ -21,9 +21,6 @@ Gem::Specification.new do |s|
 
   s.require_paths = ["lib"]
 
-  # Ruby version
-  s.required_ruby_version = ::Gem::Requirement.new("~> 1.9")
-
   # RubyForge
   s.rubyforge_project = "media-path"
 end

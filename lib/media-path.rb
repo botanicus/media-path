@@ -1,7 +1,6 @@
 # coding: utf-8
 
 class MediaPath
-  VERSION = "0.1.3"
   # @since 0.0.1
   def self.first_file(*choices)
     choices.find { |file| File.file?(File.expand_path(file)) }
